@@ -1,21 +1,65 @@
-<?php 
+<?php
+//1. Buat koneksi dengan MySQL
+$con = mysqli_connect("localhost","root","","fakultas");
 
-echo "Hello World, It's <strong> Deta </strong>!<br>";
-$umur = "20";
-$nama = "SEAL AWS";
-$text = "PHP";
+//2. Cek koneksi dengan MySQL
+if(mysqli_connect_errno()){
+    echo "Koneksi gagal". mysqli_connect_error();
+}else{
+    echo "Koneksi berhasil";
+}
 
-echo "I am on my $umur now and currently joining $nama, this web is for practice $text. <br>";
+//3. membaca data dari tabel MySQL.
+$query= "SELECT *  FROM mahasiswa";
 
+//4. Tampilkan data dengan menjalankan sql query
+$result = mysqli_query($con,$query);
+$mahasiswa = [];
+if ($result){
+    // tampilkan data satu per satu
+    while($row = mysqli_fetch_assoc($result)){
+        $mahasiswa[] = $row;
+    }
+    mysqli_free_result($result);
+}
 
-$namaKakak = "Daud";
-$umurKakak = "29";
-
-echo "I have a big bro named <strong>$namaKakak</strong>, my big brother is now on his 
-$umurKakak yo. <br>";
-
-$selisihumur = $umurKakak - $umur;
-
-echo "My brother and i are $selisihumur years apart"
+//5. tutup koneksi mysql
+mysqli_close($con);
 
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Mahasiswa</title>
+</head>
+<body>
+    <h1>Data Mahasiswa</h1>
+    <a href="insert.php"> Tambah Data</a>
+    <?php //var_dump($mahasiswa); ?>
+    <table border="2" style="width:100%;">
+        <tr>
+            <th>NIM</th>
+            <th>Nama</th>
+            <th>Tempat Lahir</th>
+            <th>Action</th>
+        </tr>
+        <?php foreach($mahasiswa as $value): ?>
+        <tr>
+            <td><?php echo $value["nim"]; ?></td>
+            <td><?php echo $value["nama"]; ?></td>
+            <td><?php echo $value["tempat_lahir"]; ?></td>
+            <td>
+                <a href="<?php echo "update.php?id=".$value["id"]; ?>">Edit</a>
+                <a href="<?php echo "delete.php?id=".$value["id"]; ?>">Delete</a>
+                
+            </td>
+
+        </tr>
+        <?php endforeach; ?>
+    </table>
+</body>
+</html>
